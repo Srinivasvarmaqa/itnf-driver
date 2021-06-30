@@ -1,6 +1,7 @@
 package com.itt.factoryhelper;
 
 import java.net.URL;
+import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.UnexpectedAlertBehaviour;
@@ -52,6 +53,8 @@ public class FirefoxBrowserDriver extends BrowserHelperFactory {
 		}
 		this.browserInfoObj.setBrowserVersion(cap.getVersion().toString());
 		this.ittDriverContext.setAttribute("PARENT_WINDOW_HANDLE_ID", this.driver.getWindowHandle());
+		this.driver.manage().timeouts().setScriptTimeout(20, TimeUnit.SECONDS);
+
 	}
 
 	public void invokeDriver() throws Exception {
