@@ -203,8 +203,11 @@ public class BrowserHelperFactory implements BrowserHelperFactoryI {
 
 	@Override
 	public void click(HashMap<String, String> params) throws Exception {
-		this.waitForElement(params);
 		By by = getByFromParams(params);
+		if (params.containsKey("scrollTo")) {
+			this.scrollTo(params);
+		}
+		this.waitForElement(params);
 		WebElement element = this.getWebDriver().findElement(by);
 		wait = this.getWebDriverWait(Timeout.TEN_SECONDS_TIMEOUT);
 		wait.until(ExpectedConditions.elementToBeClickable(element));
@@ -587,5 +590,27 @@ public class BrowserHelperFactory implements BrowserHelperFactoryI {
 	@Override
 	public void close() throws Exception {
 		this.getWebDriver().close();
+	}
+
+	@Override
+	public void scrollPageDown() throws Exception {
+		LOG.debug("Scroll page Down");
+		JavascriptExecutor js = (JavascriptExecutor) this.getWebDriver();
+		js.executeScript("window.scrollTo(0, document.body.scrollHeight)");
+	}
+
+	@Override
+	public void scrollPageUp() throws Exception {
+		LOG.debug("Scroll page Up");
+		JavascriptExecutor js = (JavascriptExecutor) this.getWebDriver();
+		js.executeScript("window.scrollTo(0, -document.body.scrollHeight)");
+	}
+
+	@Override
+	public void scrollTo(HashMap<String, String> params) throws Exception {
+		LOG.debug("Scroll till the element is found");
+		final By by = getByFromParams(params);
+		JavascriptExecutor js = (JavascriptExecutor) this.getWebDriver();
+		js.executeScript("arguments[0].scrollIntoView(true);", this.getWebDriver().findElement(by));
 	}
 }

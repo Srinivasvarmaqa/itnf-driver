@@ -83,4 +83,10 @@ public interface BrowserHelperFactoryI {
 
 	public void close() throws Exception;
 
+	public void scrollPageDown() throws Exception;
+
+	public void scrollPageUp() throws Exception;
+
+	public void scrollTo(HashMap<String, String> params) throws Exception;
+
 }
