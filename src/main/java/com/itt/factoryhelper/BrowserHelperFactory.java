@@ -322,7 +322,7 @@ public class BrowserHelperFactory implements BrowserHelperFactoryI {
 						"return (window.self.name == '') && (document.readyState == 'complete');")) {
 					return;
 				} else if ((Boolean) js.executeScript(
-						"return (window.self.name != '') && (jQuery.active == 0) && (document.readyState == 'complete');")) {
+						"return (window.self.name != '') && (jQuery.active <= 1) && (document.readyState == 'complete');")) {
 					return;
 				} else {
 					Thread.sleep(1000);
