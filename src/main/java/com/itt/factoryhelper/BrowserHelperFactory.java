@@ -209,15 +209,10 @@ public class BrowserHelperFactory implements BrowserHelperFactoryI {
 		}
 		this.waitForElement(params);
 		WebElement element = this.getWebDriver().findElement(by);
-		try {
-			LOG.info("Wait for element to be clicable");
-			wait = this.getWebDriverWait(Timeout.TEN_SECONDS_TIMEOUT);
-			wait.until(ExpectedConditions.elementToBeClickable(element));
-			element.click();
-		} catch (Exception e) {
-			LOG.info("**** ELEMENT IS NOT CLICABLE **** ");
-			e.printStackTrace();
-		}
+		LOG.info("Wait for element to be clickable");
+		wait = this.getWebDriverWait(Timeout.TEN_SECONDS_TIMEOUT);
+		element = wait.until(ExpectedConditions.elementToBeClickable(element));
+		element.click();
 	}
 
 	@Override
