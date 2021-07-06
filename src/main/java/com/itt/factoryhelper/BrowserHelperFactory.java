@@ -467,6 +467,7 @@ public class BrowserHelperFactory implements BrowserHelperFactoryI {
 
 	@Override
 	public String getText(HashMap<String, String> params) throws Exception {
+		this.waitForElement(params);
 		try {
 			if (!isElementPresent(params))
 				return null;
