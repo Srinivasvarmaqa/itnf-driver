@@ -141,7 +141,7 @@ public class BrowserHelperFactory implements BrowserHelperFactoryI {
 			}
 			isElementPresent = element.isDisplayed();
 		} catch (Exception e) {
-			LOG.info("Exception during isElement Present Check - " + by.toString());
+			LOG.debug("Exception during isElement Present Check - " + by.toString());
 		}
 		return isElementPresent;
 	}
@@ -209,7 +209,7 @@ public class BrowserHelperFactory implements BrowserHelperFactoryI {
 		}
 		this.waitForElement(params);
 		WebElement element = this.getWebDriver().findElement(by);
-		LOG.info("Wait for element to be clickable");
+		LOG.debug("Wait for element to be clickable");
 		wait = this.getWebDriverWait(Timeout.TWENTY_SECONDS_TIMEOUT);
 		element = wait.until(ExpectedConditions.elementToBeClickable(element));
 		element.click();
@@ -225,7 +225,7 @@ public class BrowserHelperFactory implements BrowserHelperFactoryI {
 			} else {
 				wait = this.getWebDriverWait(Timeout.TEN_SECONDS_TIMEOUT);
 			}
-			LOG.info("Wait for element to be visible for max time:" + waitTime);
+			LOG.debug("Wait for element to be visible for max time:" + waitTime);
 			String visibility = "true";
 			if (params.containsKey("visibility")) {
 				visibility = params.get("visibility");
@@ -253,7 +253,7 @@ public class BrowserHelperFactory implements BrowserHelperFactoryI {
 
 	private WebElement waitForVisibleElement(final By by, int waitTime, String visibility) throws Exception {
 		WebElement element = null;
-		LOG.info("By= " + by.toString());
+		LOG.debug("By= " + by.toString());
 		wait = this.getWebDriverWait(waitTime);
 		for (int attempt = 0; attempt < waitTime; attempt++) {
 			try {
@@ -261,12 +261,12 @@ public class BrowserHelperFactory implements BrowserHelperFactoryI {
 				if (visibility.equals("true")) {
 					break;
 				} else if (visibility.equals("false")) {
-					LOG.info("Started waiting for element to disappear...");
+					LOG.debug("Started waiting for element to disappear...");
 					long startTime = System.currentTimeMillis();
 					wait.until(ExpectedConditions.invisibilityOfElementLocated(by));
 					long endTime = System.currentTimeMillis();
 					element = null;
-					LOG.info("Element disappeared after {} seconds.", (endTime - startTime) / 1000);
+					LOG.debug("Element disappeared after {} seconds.", (endTime - startTime) / 1000);
 					break;
 				}
 			} catch (Exception exc) {
@@ -329,9 +329,9 @@ public class BrowserHelperFactory implements BrowserHelperFactoryI {
 				}
 			}
 		} catch (Exception e) {
-			LOG.info("wait for page load check failed" + e.getMessage());
+			LOG.debug("wait for page load check failed" + e.getMessage());
 		}
-		 LOG.info("PAGE IS NOT LOADED SUCCESSFULLY EVEN AFTER WAITING FOR SECONDS:" + i);
+		 LOG.debug("PAGE IS NOT LOADED SUCCESSFULLY EVEN AFTER WAITING FOR SECONDS:" + i);
 	}
 
 	@Override
@@ -408,7 +408,7 @@ public class BrowserHelperFactory implements BrowserHelperFactoryI {
 			WebElement frame = (WebElement) ((JavascriptExecutor) this.getWebDriver()).executeScript("return window.frameElement");
 			return frame;
 		} catch (Exception e) {
-			LOG.info("Couldn't get the current frame {}", e.getMessage());
+			LOG.debug("Couldn't get the current frame {}", e.getMessage());
 			return null;
 		}
 	}
@@ -436,14 +436,14 @@ public class BrowserHelperFactory implements BrowserHelperFactoryI {
 			try {
 				element = this.getWebDriver().findElement(by);
 				if (null != element ) {
-					LOG.info("Found the element by {}, Returning the element", by.toString());
+					LOG.debug("Found the element by {}, Returning the element", by.toString());
 				}
 				break;
 			} catch (NoSuchElementException nsee) {
 				try {
 					Thread.sleep(1000);
 				} catch (InterruptedException e1) {
-					LOG.info("Element not found by {} till time", i);
+					LOG.debug("Element not found by {} till time", i);
 				}
 			}
 		}
@@ -481,7 +481,7 @@ public class BrowserHelperFactory implements BrowserHelperFactoryI {
 	public void selectDropDown(HashMap<String, String> params) throws Exception {
 		By by = getByFromParams(params);
 		if (params.containsKey("value") && params.get("value") == null ) {
-			LOG.info("Value is null");
+			LOG.debug("Value is null");
 		} else {
 			this.waitForElement(params);
 			Select dropdown = new Select(this.getWebDriver().findElement(by));
@@ -512,7 +512,7 @@ public class BrowserHelperFactory implements BrowserHelperFactoryI {
 	        wait.until(ExpectedConditions.alertIsPresent());
 	        return true;
 		} catch (Exception e) {
-			LOG.info("Alert is NOT Displayed");
+			LOG.debug("Alert is NOT Displayed");
 			return false;
 		}
 	}
@@ -551,12 +551,12 @@ public class BrowserHelperFactory implements BrowserHelperFactoryI {
 			for (String winHandle : this.getWebDriver().getWindowHandles()) {
 				if (!parentWindowHandle.equals(winHandle)) {
 					WebDriver windowPopup = this.getWebDriver().switchTo().window(winHandle);
-					LOG.info("Window Title is:" + windowPopup.getTitle());
+					LOG.debug("Window Title is:" + windowPopup.getTitle());
 					windowPopup.close();
 				}
 			}
 		} catch (Exception e) {
-			LOG.info("Failed to close the child window");
+			LOG.debug("Failed to close the child window");
 		} finally {
 			this.getWebDriver().switchTo().window(parentWindowHandle);
 		}
@@ -564,7 +564,7 @@ public class BrowserHelperFactory implements BrowserHelperFactoryI {
 
 	@Override
 	public String executeJavaScript(String cmd) throws Exception {
-		LOG.info("Executing javascript with command:" + cmd);
+		LOG.debug("Executing javascript with command:" + cmd);
 		JavascriptExecutor js = (JavascriptExecutor) this.getWebDriver();
 		return (String)js.executeScript(cmd);
 	}
@@ -576,7 +576,7 @@ public class BrowserHelperFactory implements BrowserHelperFactoryI {
 			Path target = new File(params.get("FilePath") + ".png").toPath();
 			Files.copy(srcFile, target, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
 		} catch (IOException e) {
-			LOG.info("Exception while taking screenshot! "  + e.getMessage());
+			LOG.debug("Exception while taking screenshot! "  + e.getMessage());
 		}
 	}
 
@@ -597,21 +597,21 @@ public class BrowserHelperFactory implements BrowserHelperFactoryI {
 
 	@Override
 	public void scrollPageDown() throws Exception {
-		LOG.info("Scroll page Down");
+		LOG.debug("Scroll page Down");
 		JavascriptExecutor js = (JavascriptExecutor) this.getWebDriver();
 		js.executeScript("window.scrollTo(0, document.body.scrollHeight)");
 	}
 
 	@Override
 	public void scrollPageUp() throws Exception {
-		LOG.info("Scroll page Up");
+		LOG.debug("Scroll page Up");
 		JavascriptExecutor js = (JavascriptExecutor) this.getWebDriver();
 		js.executeScript("window.scrollTo(0, -document.body.scrollHeight)");
 	}
 
 	@Override
 	public void scrollTo(HashMap<String, String> params) throws Exception {
-		LOG.info("Scroll till the element is found");
+		LOG.debug("Scroll till the element is found");
 		final By by = getByFromParams(params);
 		JavascriptExecutor js = (JavascriptExecutor) this.getWebDriver();
 		js.executeScript("arguments[0].scrollIntoView(true);", this.getWebDriver().findElement(by));
