@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
@@ -17,7 +18,9 @@ import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -253,7 +256,7 @@ public class BrowserHelperFactory implements BrowserHelperFactoryI {
 
 	private WebElement waitForVisibleElement(final By by, int waitTime, String visibility) throws Exception {
 		WebElement element = null;
-		LOG.debug("By= " + by.toString());
+		LOG.info("By= " + by.toString());
 		wait = this.getWebDriverWait(waitTime);
 		for (int attempt = 0; attempt < waitTime; attempt++) {
 			try {
@@ -261,12 +264,12 @@ public class BrowserHelperFactory implements BrowserHelperFactoryI {
 				if (visibility.equals("true")) {
 					break;
 				} else if (visibility.equals("false")) {
-					LOG.debug("Started waiting for element to disappear...");
+					LOG.info("Started waiting for element to disappear...");
 					long startTime = System.currentTimeMillis();
 					wait.until(ExpectedConditions.invisibilityOfElementLocated(by));
 					long endTime = System.currentTimeMillis();
 					element = null;
-					LOG.debug("Element disappeared after {} seconds.", (endTime - startTime) / 1000);
+					LOG.info("Element disappeared after {} seconds.", (endTime - startTime) / 1000);
 					break;
 				}
 			} catch (Exception exc) {
@@ -275,16 +278,27 @@ public class BrowserHelperFactory implements BrowserHelperFactoryI {
 				}
 			}
 		}
-
+        Wait<WebDriver> fluentWait = new FluentWait<WebDriver>(this.getWebDriver())
+                .withTimeout(waitTime, TimeUnit.SECONDS)
+                .pollingEvery(500, TimeUnit.MILLISECONDS)
+                .ignoring(NoSuchElementException.class);
+        long startTime = System.currentTimeMillis();
 		if (visibility.equals("true")) {
-			wait.until(ExpectedConditions.visibilityOfElementLocated(by));
+			startTime = System.currentTimeMillis();
+			element = fluentWait.until(ExpectedConditions.presenceOfElementLocated(by));
+			if (null != element && element.isDisplayed()) {
+				return element;
+			} else if (null != element) {
+				fluentWait.until(ExpectedConditions.visibilityOf(element));
+			}
 		} else {
 			if (element != null) {
 				wait.until(ExpectedConditions.invisibilityOfElementLocated(by));
 				element = null;
 			}
 		}
-
+		long endTime = System.currentTimeMillis();
+		LOG.info("**** Element displayed after {} seconds.", (endTime - startTime) / 1000 + " ****");
 		return element;
 	}
 
