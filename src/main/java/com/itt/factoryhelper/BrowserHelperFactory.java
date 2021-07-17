@@ -17,6 +17,7 @@ import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.Select;
@@ -629,5 +630,14 @@ public class BrowserHelperFactory implements BrowserHelperFactoryI {
 		final By by = getByFromParams(params);
 		JavascriptExecutor js = (JavascriptExecutor) this.getWebDriver();
 		js.executeScript("arguments[0].scrollIntoView(true);", this.getWebDriver().findElement(by));
+	}
+
+	@Override
+	public void moveToElement(HashMap<String, String> params) throws Exception {
+		LOG.debug("Move to known element");
+		final By by = getByFromParams(params);
+		Actions actions = new Actions(this.getWebDriver());
+		actions.moveToElement(this.getWebDriver().findElement(by));
+		actions.release().perform();
 	}
 }

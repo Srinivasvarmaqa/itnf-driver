@@ -88,4 +88,5 @@ public interface BrowserHelperFactoryI {
 
 	public void scrollTo(HashMap<String, String> params) throws Exception;
 
+	public void moveToElement(HashMap<String, String> params) throws Exception;
 }
