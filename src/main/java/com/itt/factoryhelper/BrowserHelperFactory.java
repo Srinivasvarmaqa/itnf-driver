@@ -257,7 +257,7 @@ public class BrowserHelperFactory implements BrowserHelperFactoryI {
 
 	private WebElement waitForVisibleElement(final By by, int waitTime, String visibility) throws Exception {
 		WebElement element = null;
-		LOG.info("By= " + by.toString());
+		LOG.debug("By= " + by.toString());
 		wait = this.getWebDriverWait(waitTime);
 		for (int attempt = 0; attempt < waitTime; attempt++) {
 			try {
@@ -265,12 +265,12 @@ public class BrowserHelperFactory implements BrowserHelperFactoryI {
 				if (visibility.equals("true")) {
 					break;
 				} else if (visibility.equals("false")) {
-					LOG.info("Started waiting for element to disappear...");
+					LOG.debug("Started waiting for element to disappear...");
 					long startTime = System.currentTimeMillis();
 					wait.until(ExpectedConditions.invisibilityOfElementLocated(by));
 					long endTime = System.currentTimeMillis();
 					element = null;
-					LOG.info("Element disappeared after {} seconds.", (endTime - startTime) / 1000);
+					LOG.debug("Element disappeared after {} seconds.", (endTime - startTime) / 1000);
 					break;
 				}
 			} catch (Exception exc) {
@@ -299,7 +299,7 @@ public class BrowserHelperFactory implements BrowserHelperFactoryI {
 			}
 		}
 		long endTime = System.currentTimeMillis();
-		LOG.info("**** Element displayed after {} seconds.", (endTime - startTime) / 1000 + " ****");
+		LOG.debug("**** Element displayed after {} seconds.", (endTime - startTime) / 1000 + " ****");
 		return element;
 	}
 
