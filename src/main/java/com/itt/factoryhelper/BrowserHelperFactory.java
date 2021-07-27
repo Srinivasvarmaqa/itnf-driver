@@ -214,8 +214,9 @@ public class BrowserHelperFactory implements BrowserHelperFactoryI {
 		}
 		this.waitForElement(params);
 		WebElement element = this.getWebDriver().findElement(by);
-		wait = this.getWebDriverWait(Timeout.SIXTY_SECONDS_TIMEOUT);
-		wait.until(ExpectedConditions.elementToBeClickable(element));
+		LOG.debug("Wait for element to be clickable");
+		wait = this.getWebDriverWait(Timeout.TWENTY_SECONDS_TIMEOUT);
+		element = wait.until(ExpectedConditions.elementToBeClickable(element));
 		element.click();
 	}
 
