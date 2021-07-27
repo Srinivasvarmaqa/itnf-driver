@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -89,4 +90,6 @@ public interface BrowserHelperFactoryI {
 	public void scrollTo(HashMap<String, String> params) throws Exception;
 
 	public void moveToElement(HashMap<String, String> params) throws Exception;
+
+	public void sendSpecialKeys(Keys key) throws Exception;
 }

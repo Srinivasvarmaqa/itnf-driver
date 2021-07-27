@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoAlertPresentException;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.OutputType;
@@ -213,9 +214,8 @@ public class BrowserHelperFactory implements BrowserHelperFactoryI {
 		}
 		this.waitForElement(params);
 		WebElement element = this.getWebDriver().findElement(by);
-		LOG.debug("Wait for element to be clickable");
-		wait = this.getWebDriverWait(Timeout.TWENTY_SECONDS_TIMEOUT);
-		element = wait.until(ExpectedConditions.elementToBeClickable(element));
+		wait = this.getWebDriverWait(Timeout.SIXTY_SECONDS_TIMEOUT);
+		wait.until(ExpectedConditions.elementToBeClickable(element));
 		element.click();
 	}
 
@@ -640,4 +640,14 @@ public class BrowserHelperFactory implements BrowserHelperFactoryI {
 		actions.moveToElement(this.getWebDriver().findElement(by));
 		actions.release().perform();
 	}
+
+    @Override
+    public void sendSpecialKeys(Keys key) {
+	try {
+		this.getWebDriver().switchTo().activeElement().sendKeys(key);
+	} catch (Exception e) {
+		LOG.info("UNABLE TO SEND KEYS=======");
+		e.printStackTrace();
+	}
+}
 }
