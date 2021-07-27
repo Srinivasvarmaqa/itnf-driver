@@ -6,18 +6,23 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoAlertPresentException;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -224,6 +229,7 @@ public class BrowserHelperFactory implements BrowserHelperFactoryI {
 			} else {
 				wait = this.getWebDriverWait(Timeout.TEN_SECONDS_TIMEOUT);
 			}
+			LOG.debug("Wait for element to be visible for max time:" + waitTime);
 			String visibility = "true";
 			if (params.containsKey("visibility")) {
 				visibility = params.get("visibility");
@@ -273,16 +279,27 @@ public class BrowserHelperFactory implements BrowserHelperFactoryI {
 				}
 			}
 		}
-
+        Wait<WebDriver> fluentWait = new FluentWait<WebDriver>(this.getWebDriver())
+                .withTimeout(waitTime, TimeUnit.SECONDS)
+                .pollingEvery(500, TimeUnit.MILLISECONDS)
+                .ignoring(NoSuchElementException.class);
+        long startTime = System.currentTimeMillis();
 		if (visibility.equals("true")) {
-			wait.until(ExpectedConditions.visibilityOfElementLocated(by));
+			startTime = System.currentTimeMillis();
+			element = fluentWait.until(ExpectedConditions.presenceOfElementLocated(by));
+			if (null != element && element.isDisplayed()) {
+				return element;
+			} else if (null != element) {
+				fluentWait.until(ExpectedConditions.visibilityOf(element));
+			}
 		} else {
 			if (element != null) {
 				wait.until(ExpectedConditions.invisibilityOfElementLocated(by));
 				element = null;
 			}
 		}
-
+		long endTime = System.currentTimeMillis();
+		LOG.debug("**** Element displayed after {} seconds.", (endTime - startTime) / 1000 + " ****");
 		return element;
 	}
 
@@ -315,12 +332,12 @@ public class BrowserHelperFactory implements BrowserHelperFactoryI {
 		JavascriptExecutor js = (JavascriptExecutor) this.getWebDriver();
 		int i = 0;
 		try {
-			for (i = 0; i < 6; i++) {
+			for (i = 0; i < 5; i++) {
 				if ((Boolean) js.executeScript(
 						"return (window.self.name == '') && (document.readyState == 'complete');")) {
 					return;
 				} else if ((Boolean) js.executeScript(
-						"return (window.self.name != '') && (jQuery.active <= 2) && (document.readyState == 'complete');")) {
+						"return (window.self.name != '') && (jQuery.active <= 1) && (document.readyState == 'complete');")) {
 					return;
 				} else {
 					Thread.sleep(1000);
@@ -406,7 +423,7 @@ public class BrowserHelperFactory implements BrowserHelperFactoryI {
 			WebElement frame = (WebElement) ((JavascriptExecutor) this.getWebDriver()).executeScript("return window.frameElement");
 			return frame;
 		} catch (Exception e) {
-			LOG.info("Couldn't get the current frame {}", e.getMessage());
+			LOG.debug("Couldn't get the current frame {}", e.getMessage());
 			return null;
 		}
 	}
@@ -465,6 +482,7 @@ public class BrowserHelperFactory implements BrowserHelperFactoryI {
 
 	@Override
 	public String getText(HashMap<String, String> params) throws Exception {
+		this.waitForElement(params);
 		try {
 			if (!isElementPresent(params))
 				return null;
@@ -509,7 +527,7 @@ public class BrowserHelperFactory implements BrowserHelperFactoryI {
 	        wait.until(ExpectedConditions.alertIsPresent());
 	        return true;
 		} catch (Exception e) {
-			LOG.info("Alert is NOT Displayed");
+			LOG.debug("Alert is NOT Displayed");
 			return false;
 		}
 	}
@@ -548,12 +566,12 @@ public class BrowserHelperFactory implements BrowserHelperFactoryI {
 			for (String winHandle : this.getWebDriver().getWindowHandles()) {
 				if (!parentWindowHandle.equals(winHandle)) {
 					WebDriver windowPopup = this.getWebDriver().switchTo().window(winHandle);
-					LOG.info("Window Title is:" + windowPopup.getTitle());
+					LOG.debug("Window Title is:" + windowPopup.getTitle());
 					windowPopup.close();
 				}
 			}
 		} catch (Exception e) {
-			LOG.info("Failed to close the child window");
+			LOG.debug("Failed to close the child window");
 		} finally {
 			this.getWebDriver().switchTo().window(parentWindowHandle);
 		}
@@ -613,4 +631,23 @@ public class BrowserHelperFactory implements BrowserHelperFactoryI {
 		JavascriptExecutor js = (JavascriptExecutor) this.getWebDriver();
 		js.executeScript("arguments[0].scrollIntoView(true);", this.getWebDriver().findElement(by));
 	}
+
+	@Override
+	public void moveToElement(HashMap<String, String> params) throws Exception {
+		LOG.debug("Move to known element");
+		final By by = getByFromParams(params);
+		Actions actions = new Actions(this.getWebDriver());
+		actions.moveToElement(this.getWebDriver().findElement(by));
+		actions.release().perform();
+	}
+
+    @Override
+    public void sendSpecialKeys(Keys key) {
+	try {
+		this.getWebDriver().switchTo().activeElement().sendKeys(key);
+	} catch (Exception e) {
+		LOG.info("UNABLE TO SEND KEYS=======");
+		e.printStackTrace();
+	}
+}
 }

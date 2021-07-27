@@ -60,8 +60,8 @@ public class ChromeBrowserDriver extends BrowserHelperFactory {
 		}
 		this.browserInfoObj.setBrowserVersion(cap.getVersion().toString());
 		this.ittDriverContext.setAttribute("PARENT_WINDOW_HANDLE_ID", this.driver.getWindowHandle());
-		this.driver.manage().timeouts().setScriptTimeout(20, TimeUnit.SECONDS);
-		this.driver.manage().window().maximize();
+		this.driver.manage().timeouts().setScriptTimeout(60, TimeUnit.SECONDS);
+		//this.driver.manage().window().maximize();
 	}
 
 	public void invokeDriver() throws Exception {
