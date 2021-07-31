@@ -93,5 +93,5 @@ public interface BrowserHelperFactoryI {
 
 	public void sendSpecialKeys(Keys key) throws Exception;
 
-	public boolean isButtonEnabled(HashMap<String, String> params) throws Exception;
+	public boolean isElementEnabled(HashMap<String, String> params) throws Exception;
 }

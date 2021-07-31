@@ -653,7 +653,7 @@ public class BrowserHelperFactory implements BrowserHelperFactoryI {
     }
 
 	@Override
-	public boolean isButtonEnabled(HashMap<String, String> params) throws Exception {
+	public boolean isElementEnabled(HashMap<String, String> params) throws Exception {
 		By by = getByFromParams(params);
 		this.waitForElement(params);
 		WebElement element = this.getWebDriver().findElement(by);
