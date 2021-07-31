@@ -649,6 +649,14 @@ public class BrowserHelperFactory implements BrowserHelperFactoryI {
 	} catch (Exception e) {
 		LOG.info("UNABLE TO SEND KEYS=======");
 		e.printStackTrace();
+		}
+    }
+
+	@Override
+	public boolean isElementEnabled(HashMap<String, String> params) throws Exception {
+		By by = getByFromParams(params);
+		this.waitForElement(params);
+		WebElement element = this.getWebDriver().findElement(by);
+		return element.isEnabled();
 	}
-}
 }
