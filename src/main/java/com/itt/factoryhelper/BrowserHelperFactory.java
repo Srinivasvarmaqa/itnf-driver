@@ -659,4 +659,18 @@ public class BrowserHelperFactory implements BrowserHelperFactoryI {
 		WebElement element = this.getWebDriver().findElement(by);
 		return element.isEnabled();
 	}
+// Added by Srinivas
+	/*	@Override
+		public void waitForFrame(HashMap<String, String> params) throws Exception {
+			try {
+			final By by = getByFromParams(params);
+			wait = this.getWebDriverWait(Timeout.SIXTY_SECONDS_TIMEOUT);
+			wait.until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(by));
+			Thread.sleep(1000);
+			} catch (Exception e) {
+				LOG.info("Exception during isFrame Present Check -");
+				e.printStackTrace();
+			}
+
+		}*/
 }

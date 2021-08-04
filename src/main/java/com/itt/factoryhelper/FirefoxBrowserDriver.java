@@ -46,7 +46,8 @@ public class FirefoxBrowserDriver extends BrowserHelperFactory {
 			cap = ((RemoteWebDriver) this.driver).getCapabilities();
 		} else {
 			LOG.info("LAUNCH WEB DRIVER STANDLONE SERVER");
-			String firefoxDriverPath = System.getProperty("FIREFOX_LOCAL_DRIVER_PATH");
+			//String firefoxDriverPath = System.getProperty("FIREFOX_LOCAL_DRIVER_PATH");C:\EXE
+			String firefoxDriverPath ="C:\\EXE\\geckodriver.exe";
 			System.setProperty("webdriver.firefox.driver", firefoxDriverPath);
 			this.driver = new FirefoxDriver();
 			cap = ((FirefoxDriver) this.driver).getCapabilities();

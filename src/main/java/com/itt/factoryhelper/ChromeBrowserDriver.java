@@ -49,7 +49,8 @@ public class ChromeBrowserDriver extends BrowserHelperFactory {
 		} else {
 			LOG.info("LAUNCH WEB DRIVER STANDLONE SERVER");
 			ChromeOptions options = new ChromeOptions();
-			String chromeDriverPath = System.getProperty("CHROME_LOCAL_DRIVER_PATH");
+		//	String chromeDriverPath = System.getProperty("CHROME_LOCAL_DRIVER_PATH");C:\Driverpath
+			String chromeDriverPath ="C:\\Driverpath\\chromedriver.exe";
 			if (chromeDriverPath == null) {
 				LOG.error("Chrome local Driver path is not provided");
 				throw new Exception("Chrome local driver path is not set, set Env variable CHROME_LOCAL_DRIVER_PATH");
